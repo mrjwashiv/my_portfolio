@@ -17,7 +17,10 @@
  */
 function addRandomGreeting() {
   const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+      ['"I am running away from my responsibilities and it feels good."— Michael Scott',
+       '"Mini cupcakes? As in the mini version of regular cupcakes? Which is already a mini version of cake? Honestly, where does it end with you people?" — Kevin Malone',
+       '"I want people to be afraid of how much they love me." — Michael Scott',
+       '"You only live once? False. You live every day. You only die once." — Dwight Schrute'];
 
   // Pick a random greeting.
   const greeting = greetings[Math.floor(Math.random() * greetings.length)];
