@@ -7,3 +7,10 @@
 #greeting-container {
   margin-top: 20px;
 }
+
+table, th, td {
+  border: 3px solid black;
+  border-collapse:collapse;
+}
+
+h1, h2, p, 
