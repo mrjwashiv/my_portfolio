@@ -13,4 +13,40 @@ table, th, td {
   border-collapse:collapse;
 }
 
-h1, h2, p, 
+table {
+    background-color: darkturquoise;
+}
+
+body {
+  background-color: antiquewhite;
+}
+
+#navbar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+#navlink {
+  float:left;
+  border-right: 1px solid gray;
+}
+
+li:last-child {
+  border-right: none;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: aquamarine;
+  color: black;
+}
