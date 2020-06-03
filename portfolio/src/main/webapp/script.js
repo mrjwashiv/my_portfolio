@@ -29,3 +29,26 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+
+function getMessage() {
+      console.log('Fetching a message');
+
+      const responsePromise = fetch('/data');
+
+      responsePromise.then(handleResponse);
+}
+
+function handleResponse (response) {
+    console.log('Handling the Response');
+
+    const textPromise = response.text();
+
+    textPromise.then(addMessageToDom);
+}
+
+function addMessageToDom (message) {
+    console.log('Adding this message to DOM: ' + message);
+
+    const messageContainer = document.getElementById('message-container');
+    messageContainer.innerText = message;
+}
