@@ -31,13 +31,31 @@ function addRandomGreeting() {
 }
 
 function getMessage() {
-      console.log('Fetching a message');
+    fetch('/data').then(response => response.json()).then((message) => {
 
-      const responsePromise = fetch('/data');
+    const messageListElement = document.getElementById("message-container");
+    messageListElement.innerHTML = '';
+    messageListElement.appendChild(
+        createListElement('First Comment: ' + message[0]));
+    messageListElement.appendChild(
+        createListElement('Second Comment: ' + message[1]));
+    messageListElement.appendChild(
+        createListElement('Third Comment: ' + message[2]));
+    });
 
-      responsePromise.then(handleResponse);
+    system.out.print(messageListElement);
+
+
+    /*
+    console.log('Fetching a message');
+
+    const responsePromise = fetch('/data');
+
+    responsePromise.then(handleResponse);
+    */
 }
 
+/*
 function handleResponse (response) {
     console.log('Handling the Response');
 
@@ -51,4 +69,11 @@ function addMessageToDom (message) {
 
     const messageContainer = document.getElementById('message-container');
     messageContainer.innerText = message;
+}
+*/
+
+function createListElement(text) {
+    const liElement = document.createElement('li');
+    liElement.innerText = text;
+    return liElement;
 }
