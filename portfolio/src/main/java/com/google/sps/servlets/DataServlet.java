@@ -25,24 +25,30 @@ import com.google.gson.Gson;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
- 
+  private ArrayList<String> serverData = new ArrayList<String>();
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ArrayList<String> serverData = new ArrayList<String>();
-    serverData.add("Message 1");
-    serverData.add("Message 2");
-    serverData.add("Message 3");
-
-    String json = convertToJson(serverData);
-
     response.setContentType("application/json");
+    String json = convertToJson(serverData);
     response.getWriter().println(json);
+  }
 
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      String userComment = getUserComment(request);
+      serverData.add(userComment);
+
+      response.sendRedirect("/data");
   }
 
   private String convertToJson(ArrayList<String> serverData) {
       Gson gson = new Gson();
       String json = gson.toJson(serverData);
       return json;
+  }
+
+  private String getUserComment(HttpServletRequest request) {
+      String userComment = request.getParameter("user-comment");
+      return userComment;
   }
 }

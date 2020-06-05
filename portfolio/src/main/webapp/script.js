@@ -35,12 +35,9 @@ function getMessage() {
 
     const messageListElement = document.getElementById("message-container");
     messageListElement.innerHTML = '';
-    messageListElement.appendChild(
-        createListElement('First Comment: ' + message[0]));
-    messageListElement.appendChild(
-        createListElement('Second Comment: ' + message[1]));
-    messageListElement.appendChild(
-        createListElement('Third Comment: ' + message[2]));
+    message.forEach((element) => {
+      messageListElement.appendChild(createListElement(element));
+      })
     });
 
     system.out.print(messageListElement);
