@@ -30,44 +30,18 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
-function getMessage() {
-    fetch('/data').then(response => response.json()).then((message) => {
+function getComments() {
+    fetch('/data').then(response => response.json()).then((comment) => {
 
-    const messageListElement = document.getElementById("message-container");
+    const messageListElement = document.getElementById("comment-container");
     messageListElement.innerHTML = '';
-    message.forEach((element) => {
-      messageListElement.appendChild(createListElement(element));
+    comment.forEach((element) => {
+      messageListElement.appendChild(createListElement(element.userComment));
       })
     });
 
     system.out.print(messageListElement);
-
-
-    /*
-    console.log('Fetching a message');
-
-    const responsePromise = fetch('/data');
-
-    responsePromise.then(handleResponse);
-    */
 }
-
-/*
-function handleResponse (response) {
-    console.log('Handling the Response');
-
-    const textPromise = response.text();
-
-    textPromise.then(addMessageToDom);
-}
-
-function addMessageToDom (message) {
-    console.log('Adding this message to DOM: ' + message);
-
-    const messageContainer = document.getElementById('message-container');
-    messageContainer.innerText = message;
-}
-*/
 
 function createListElement(text) {
     const liElement = document.createElement('li');
