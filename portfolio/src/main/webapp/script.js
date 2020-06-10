@@ -31,20 +31,39 @@ function addRandomGreeting() {
 }
 
 function getComments() {
-    fetch('/data').then(response => response.json()).then((comment) => {
+    const numComments = document.getElementById("num-of-comments").value;
+    fetch('/data?numOfComments=' + numComments).then(
+          response => response.json()).then((comment) => {
 
-    const messageListElement = document.getElementById("comment-container");
-    messageListElement.innerHTML = '';
-    comment.forEach((element) => {
-      messageListElement.appendChild(createListElement(element.userComment));
+      commentListElement = document.
+            getElementById("comment-container");
+      commentListElement.innerHTML = '';
+      comment.forEach((element) => {
+        commentListElement.appendChild(createCommentElement(
+            element));
       })
     });
-
-    system.out.print(messageListElement);
 }
 
-function createListElement(text) {
-    const liElement = document.createElement('li');
-    liElement.innerText = text;
-    return liElement;
+function createCommentElement(element) {
+    const commentElement = document.createElement('li');
+    commentElement.className = 'comment';
+    commentElement.innerText = element.userComment;
+
+    const deleteButtonElement = document.createElement('button');
+    deleteButtonElement.innerText = 'Delete';
+    deleteButtonElement.addEventListener('click', () => {
+        deleteComments(element);
+        
+        commentElement.remove();
+    });
+
+    commentElement.appendChild(deleteButtonElement);
+    return commentElement;
+}
+
+function deleteComments(comment) {
+    const params = new URLSearchParams();
+    params.append('id', comment.id);
+    fetch('/delete-data', {method: 'POST', body: params});
 }
