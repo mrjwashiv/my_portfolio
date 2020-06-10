@@ -20,7 +20,12 @@ public class DeleteDataServlet extends HttpServlet {
         datastore = DatastoreServiceFactory.getDatastoreService();
     }
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        long id = Long.parseLong(request.getParameter("id"));
+        long id = -1; 
+        try {
+            id = Long.parseLong(request.getParameter("id"));
+        } catch (NumberFormatException e) {
+            System.err.println("Could not convert to long: " + id);
+        }
 
         Key commentEntityKey = KeyFactory.createKey("Comment", id);
         datastore.delete(commentEntityKey);

@@ -95,7 +95,7 @@ public class DataServlet extends HttpServlet {
         numOfComments = Integer.parseInt(numOfCommentsString);
       } catch (NumberFormatException e) {
         System.err.println("Could not convert to int: " + numOfCommentsString);
-        return 1;
+        return 0;
     }
 
     return numOfComments;
