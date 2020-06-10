@@ -29,12 +29,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.appengine.api.datastore.FetchOptions;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private ArrayList<String> serverData = new ArrayList<String>();
-
+  protected ArrayList<String> serverData = new ArrayList<String>();
   protected DatastoreService datastore;
   protected Gson gson;
 
@@ -48,11 +48,13 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
-
     PreparedQuery results = datastore.prepare(query);
+    List<Entity> entityList = results.asList(FetchOptions.Builder.withLimit(
+         getNumofComments(request)));
 
     ArrayList<Comment> comments = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
+    for (int i = 0; i < entityList.size(); i++) {
+        Entity entity = entityList.get(i);
         long id = entity.getKey().getId();
         String userComment = entity.getProperty("userComment").toString();
         long timestamp = (long) entity.getProperty("timestamp");
@@ -67,7 +69,7 @@ public class DataServlet extends HttpServlet {
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      String userComment = getUserComment(request);
+      String userComment = request.getParameter("user-comment");
       long timestamp = System.currentTimeMillis();
       serverData.add(userComment);
 
@@ -85,8 +87,17 @@ public class DataServlet extends HttpServlet {
       return json;
   }
 
-  private String getUserComment(HttpServletRequest request) {
-      String userComment = request.getParameter("user-comment");
-      return userComment;
+  private int getNumofComments(HttpServletRequest request) {
+      String numOfCommentsString = request.getParameter("numOfComments");
+
+      int numOfComments;
+      try {
+        numOfComments = Integer.parseInt(numOfCommentsString);
+      } catch (NumberFormatException e) {
+        System.err.println("Could not convert to int: " + numOfCommentsString);
+        return 1;
+    }
+
+    return numOfComments;
   }
 }
