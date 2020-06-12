@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -37,12 +39,14 @@ public class DataServlet extends HttpServlet {
   protected ArrayList<String> serverData = new ArrayList<String>();
   protected DatastoreService datastore;
   protected Gson gson;
+  protected UserService user;
 
   public DataServlet() {
     super();
 
     datastore = DatastoreServiceFactory.getDatastoreService();
     gson = new Gson();
+    user = UserServiceFactory.getUserService();
   }
 
   @Override
@@ -58,24 +62,26 @@ public class DataServlet extends HttpServlet {
         long id = entity.getKey().getId();
         String userComment = entity.getProperty("userComment").toString();
         long timestamp = (long) entity.getProperty("timestamp");
+        String email = entity.getProperty("userEmail").toString();
 
-        comments.add(new Comment(id, userComment, timestamp));
+        comments.add(new Comment(id, userComment, timestamp, email));
     }
 
     response.setContentType("application/json");
     String json = convertToJson(comments);
     response.getWriter().println(json);
-
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       String userComment = request.getParameter("user-comment");
       long timestamp = System.currentTimeMillis();
+      String userEmail = user.getCurrentUser().getEmail();
       serverData.add(userComment);
 
       Entity commentEntity = new Entity("Comment");
       commentEntity.setProperty("userComment", userComment);
       commentEntity.setProperty("timestamp", timestamp);
+      commentEntity.setProperty("userEmail", userEmail);
 
       datastore.put(commentEntity);
 

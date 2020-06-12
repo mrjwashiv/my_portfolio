@@ -31,6 +31,7 @@ function addRandomGreeting() {
 }
 
 function getComments() {
+    showHideForm();
     const numComments = document.getElementById("num-of-comments").value;
     fetch('/data?numOfComments=' + numComments).then(
           response => response.json()).then((comment) => {
@@ -45,10 +46,34 @@ function getComments() {
     });
 }
 
+function showHideForm() {
+    fetch('/login').then(response => response.json()).then((account) => {
+        const link = document.createElement('a');
+
+        if (account.isLoggedIn) {
+            document.getElementById("comment-form").style.display = "block";
+            const linkText = document.createTextNode("Logout");
+            link.appendChild(linkText);
+
+            link.title = "Logout Link";
+            link.href = account.logoutLink;
+        } else {
+            document.getElementById("comment-form").style.display = "none";
+            const linkText = document.createTextNode("Please Login to View Comments");
+            link.appendChild(linkText);
+
+            link.title = "Login Link";
+            link.href = account.loginLink;
+        }
+        
+        document.body.appendChild(link);
+    });
+}
+
 function createCommentElement(element) {
     const commentElement = document.createElement('li');
     commentElement.className = 'comment';
-    commentElement.innerText = element.userComment;
+    commentElement.innerText = element.userEmail + ": " + element.userComment;
 
     const deleteButtonElement = document.createElement('button');
     deleteButtonElement.innerText = 'Delete';
