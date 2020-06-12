@@ -33,7 +33,7 @@
       <button onclick="addRandomGreeting()">Favorite Quotes</button>
       <div id="greeting-container"></div>
       <br>
-      <form action="/data" method="POST">
+      <form action="/data" method="POST" id="comment-form">
         <p>Comments</p>
         <input type="text" name="user-comment">
         <br/><br/>
@@ -43,9 +43,9 @@
 
         <p>Number of Comments</p>
         <input type="number" name="num-of-comments" min="0" value="5" id="num-of-comments" onchange="getComments()">
-      <br>
+      <br/>
       <div id="comment-container"></div>
-      
+      <br>
     </div>
   </body>
 </html>

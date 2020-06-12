@@ -65,7 +65,6 @@ public class DataServlet extends HttpServlet {
     response.setContentType("application/json");
     String json = convertToJson(comments);
     response.getWriter().println(json);
-
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

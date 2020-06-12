@@ -24,7 +24,7 @@ public class DeleteDataServlet extends HttpServlet {
         try {
             id = Long.parseLong(request.getParameter("id"));
         } catch (NumberFormatException e) {
-            System.err.println("Could not convert to long: " + id);
+            System.err.println("Could not convert to long: " + request.getParameter("id"));
         }
 
         Key commentEntityKey = KeyFactory.createKey("Comment", id);
