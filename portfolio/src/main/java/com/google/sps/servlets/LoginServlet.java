@@ -14,6 +14,8 @@ import com.google.sps.data.LoginAccount;
 public class LoginServlet extends HttpServlet {
     protected UserService userService;
     protected Gson gson;
+    protected static final String LOGIN_REDIRECT = "/index.html";
+    protected static final String LOGOUT_REDIRECT = "/index.html";
 
     public LoginServlet() {
         super();
@@ -27,23 +29,10 @@ public class LoginServlet extends HttpServlet {
         response.setContentType("text/html");
         boolean isLoggedIn = userService.isUserLoggedIn();
 
-        String urlToRedirectToAfterUserLogsOut = "/index.html";
-        String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-
-        String urlToRedirectToAfterUserLogsIn = "/index.html";
-        String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
+        String logoutUrl = userService.createLogoutURL(LOGOUT_REDIRECT);
+        String loginUrl = userService.createLoginURL(LOGIN_REDIRECT);
 
         LoginAccount account = new LoginAccount(isLoggedIn, loginUrl, logoutUrl);
-
-        if (isLoggedIn) {
-            String userEmail = userService.getCurrentUser().getEmail();
-
-            // response.getWriter().println("<p>Hello " + userEmail + "!</p>");
-            // response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
-        } else {
-            // response.getWriter().println("<p>Hello stranger.</p>");
-            // response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
-        }
 
         response.setContentType("application/json");
         response.getWriter().println(gson.toJson(account));
