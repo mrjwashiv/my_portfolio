@@ -73,7 +73,7 @@ function showHideForm() {
 function createCommentElement(element) {
     const commentElement = document.createElement('li');
     commentElement.className = 'comment';
-    commentElement.innerText = element.userComment;
+    commentElement.innerText = element.userEmail + ": " + element.userComment;
 
     const deleteButtonElement = document.createElement('button');
     deleteButtonElement.innerText = 'Delete';
