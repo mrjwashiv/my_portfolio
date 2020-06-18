@@ -25,6 +25,10 @@ import com.google.sps.data.Comment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +36,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.blobstore.BlobInfo;
+import com.google.appengine.api.blobstore.BlobInfoFactory;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -40,6 +52,7 @@ public class DataServlet extends HttpServlet {
   protected DatastoreService datastore;
   protected Gson gson;
   protected UserService user;
+  protected BlobstoreService blobstore;
 
   public DataServlet() {
     super();
@@ -47,6 +60,7 @@ public class DataServlet extends HttpServlet {
     datastore = DatastoreServiceFactory.getDatastoreService();
     gson = new Gson();
     user = UserServiceFactory.getUserService();
+    blobstore = BlobstoreServiceFactory.getBlobstoreService();
   }
 
   @Override
@@ -63,8 +77,9 @@ public class DataServlet extends HttpServlet {
         String userComment = entity.getProperty("userComment").toString();
         long timestamp = (long) entity.getProperty("timestamp");
         String email = entity.getProperty("userEmail").toString();
+        String imageUrl = entity.getProperty("imageUrl").toString();
 
-        comments.add(new Comment(id, userComment, timestamp, email));
+        comments.add(new Comment(id, userComment, timestamp, email, imageUrl));
     }
 
     response.setContentType("application/json");
@@ -76,12 +91,14 @@ public class DataServlet extends HttpServlet {
       String userComment = request.getParameter("user-comment");
       long timestamp = System.currentTimeMillis();
       String userEmail = user.getCurrentUser().getEmail();
+      String imageUrl = getUploadedFileUrl(request, "image");
       serverData.add(userComment);
 
       Entity commentEntity = new Entity("Comment");
       commentEntity.setProperty("userComment", userComment);
       commentEntity.setProperty("timestamp", timestamp);
       commentEntity.setProperty("userEmail", userEmail);
+      commentEntity.setProperty("imageUrl", imageUrl);
 
       datastore.put(commentEntity);
 
@@ -106,4 +123,32 @@ public class DataServlet extends HttpServlet {
 
     return numOfComments;
   }
+
+  private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
+        BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+        Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
+        List<BlobKey> blobKeys = blobs.get("image");
+
+        if (blobKeys == null || blobKeys.isEmpty()) {
+        return null;
+        }
+
+        BlobKey blobKey = blobKeys.get(0);
+
+        BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+        if (blobInfo.getSize() == 0) {
+            blobstoreService.delete(blobKey);
+            return null;
+        }
+
+        ImagesService imagesService = ImagesServiceFactory.getImagesService();
+        ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(blobKey);
+
+        try {
+            URL url = new URL(imagesService.getServingUrl(options));
+            return url.getPath();
+        } catch (MalformedURLException e) {
+            return imagesService.getServingUrl(options);
+        }
+    }
 }
