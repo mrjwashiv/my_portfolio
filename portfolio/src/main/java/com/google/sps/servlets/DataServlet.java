@@ -125,20 +125,19 @@ public class DataServlet extends HttpServlet {
   }
 
   private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
-        BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-        Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
+        Map<String, List<BlobKey>> blobs = blobstore.getUploads(request);
         List<BlobKey> blobKeys = blobs.get("image");
 
         if (blobKeys == null || blobKeys.isEmpty()) {
-        return null;
+            return "";
         }
 
         BlobKey blobKey = blobKeys.get(0);
 
         BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
         if (blobInfo.getSize() == 0) {
-            blobstoreService.delete(blobKey);
-            return null;
+            blobstore.delete(blobKey);
+            return "";
         }
 
         ImagesService imagesService = ImagesServiceFactory.getImagesService();
