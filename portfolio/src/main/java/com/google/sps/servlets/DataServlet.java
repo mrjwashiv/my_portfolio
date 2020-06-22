@@ -92,13 +92,18 @@ public class DataServlet extends HttpServlet {
       long timestamp = System.currentTimeMillis();
       String userEmail = user.getCurrentUser().getEmail();
       String imageUrl = getUploadedFileUrl(request, "image");
+
       serverData.add(userComment);
 
       Entity commentEntity = new Entity("Comment");
       commentEntity.setProperty("userComment", userComment);
       commentEntity.setProperty("timestamp", timestamp);
       commentEntity.setProperty("userEmail", userEmail);
-      commentEntity.setProperty("imageUrl", imageUrl);
+
+      if(imageUrl != "")
+      {
+          commentEntity.setProperty("imageUrl", imageUrl);
+      }
 
       datastore.put(commentEntity);
 
@@ -126,7 +131,7 @@ public class DataServlet extends HttpServlet {
 
   private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
         Map<String, List<BlobKey>> blobs = blobstore.getUploads(request);
-        List<BlobKey> blobKeys = blobs.get("image");
+        List<BlobKey> blobKeys = blobs.get(formInputElementName);
 
         if (blobKeys == null || blobKeys.isEmpty()) {
             return "";

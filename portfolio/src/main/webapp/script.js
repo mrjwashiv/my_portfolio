@@ -41,10 +41,15 @@ function getComments() {
             getElementById("comment-container");
       commentListElement.innerHTML = '';
       comment.forEach((element) => {
-        console.log(element.imageUrl);
+        if (element.imageUrl != "") {
+            const image = document.createElement('img');
+            image.title = "Image Upload"
+            image.src = element.imageUrl;
+            document.body.appendChild(image);
+        }
+
         commentListElement.appendChild(createCommentElement(
             element));
-        
       })
     });
 }
