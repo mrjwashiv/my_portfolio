@@ -32,6 +32,7 @@ function addRandomGreeting() {
 
 function getComments() {
     showHideForm();
+    getImages();
     const numComments = document.getElementById("num-of-comments").value;
     fetch('/data?numOfComments=' + numComments).then(
           response => response.json()).then((comment) => {
@@ -40,6 +41,13 @@ function getComments() {
             getElementById("comment-container");
       commentListElement.innerHTML = '';
       comment.forEach((element) => {
+        if (element.imageUrl != null && !element.imageUrl.isEmpty()) {
+            const image = document.createElement('img');
+            image.title = "Image Upload"
+            image.src = element.imageUrl;
+            document.body.appendChild(image);
+        }
+
         commentListElement.appendChild(createCommentElement(
             element));
       })
@@ -68,6 +76,16 @@ function showHideForm() {
         
         document.body.appendChild(link);
     });
+}
+
+function getImages() {
+     
+    fetch('/image-upload').then(response => 
+          response.text()).then((url) => {
+        
+        const imageForm = document.getElementById("comment-form");
+        imageForm.action = url;
+     });
 }
 
 function createCommentElement(element) {
