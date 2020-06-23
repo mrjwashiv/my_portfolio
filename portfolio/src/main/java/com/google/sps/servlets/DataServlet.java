@@ -100,7 +100,7 @@ public class DataServlet extends HttpServlet {
       commentEntity.setProperty("timestamp", timestamp);
       commentEntity.setProperty("userEmail", userEmail);
 
-      if(imageUrl != "")
+      if(!imageUrl.isEmpty())
       {
           commentEntity.setProperty("imageUrl", imageUrl);
       }
