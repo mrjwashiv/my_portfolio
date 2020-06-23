@@ -41,7 +41,7 @@ function getComments() {
             getElementById("comment-container");
       commentListElement.innerHTML = '';
       comment.forEach((element) => {
-        if (element.imageUrl != "") {
+        if (element.imageUrl != null && !element.imageUrl.isEmpty()) {
             const image = document.createElement('img');
             image.title = "Image Upload"
             image.src = element.imageUrl;
