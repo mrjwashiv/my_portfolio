@@ -15,9 +15,48 @@
 package com.google.sps;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class FindMeetingQuery {
-  public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
-  }
+    public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+        List<TimeRange> freeTimes = new ArrayList<TimeRange>();
+
+        if(request.getAttendees().isEmpty()) {
+            freeTimes.add(TimeRange.WHOLE_DAY);
+            return freeTimes;
+        }
+    
+        List<TimeRange> blockedTimes = new ArrayList<TimeRange>();
+
+        for (Event event : events) {
+            if (event.getAttendees().stream().anyMatch(request.getAttendees() :: contains)) {
+                blockedTimes.add(event.getWhen());
+            }
+        }
+
+        int previousEventEnd = TimeRange.START_OF_DAY;
+        Collections.sort(blockedTimes, TimeRange.ORDER_BY_START);
+
+        for (TimeRange blockedTime : blockedTimes) {
+            if (blockedTime.end() > previousEventEnd) {  
+               if ((blockedTime.start() - previousEventEnd) >= request.getDuration()) {   
+                    
+                    freeTimes.add(TimeRange.fromStartEnd(previousEventEnd, blockedTime.start(), false));
+                }
+            }
+
+            previousEventEnd = blockedTime.end();
+        }
+
+        if ((TimeRange.END_OF_DAY - previousEventEnd) >= request.getDuration()) {
+            freeTimes.add(TimeRange.fromStartEnd(previousEventEnd, TimeRange.END_OF_DAY, true));
+        }
+
+        return freeTimes;
+    }
 }
