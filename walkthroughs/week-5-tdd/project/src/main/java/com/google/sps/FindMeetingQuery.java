@@ -24,14 +24,14 @@ import java.util.Set;
 
 public final class FindMeetingQuery {
     public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-        //throw new UnsupportedOperationException("TODO: Implement this method.");
-        List<TimeRange> blockedTimes = new ArrayList<TimeRange>();
         List<TimeRange> freeTimes = new ArrayList<TimeRange>();
 
         if(request.getAttendees().isEmpty()) {
             freeTimes.add(TimeRange.WHOLE_DAY);
             return freeTimes;
         }
+    
+        List<TimeRange> blockedTimes = new ArrayList<TimeRange>();
 
         for (Event event : events) {
             if (event.getAttendees().stream().anyMatch(request.getAttendees() :: contains)) {
